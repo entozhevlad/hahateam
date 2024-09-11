@@ -2,7 +2,7 @@ package main
 
 import (
 	"HahaTeam/internal/config"
-	"HahaTeam/internal/storage/sqlite"
+	"HahaTeam/internal/storage/postgres"
 	"fmt"
 	"log/slog"
 	"os"
@@ -23,7 +23,7 @@ func main() {
 	log.Info("starting work program", slog.String("env", cfg.Env))
 	log.Debug("debug log enabled", slog.String("env", cfg.Env))
 
-	storage, err := sqlite.NewStorage(cfg.StoragePath)
+	storage, err := postgres.NewStorage(cfg.StoragePath)
 	if err != nil {
 		log.Error("failed to init storage", err)
 		os.Exit(1)
