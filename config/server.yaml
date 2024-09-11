@@ -1,0 +1,6 @@
+env: "production"
+storage_path: "/var/lib/app/storage.db"
+http_server:
+  address: "0.0.0.0:8082"  # Для прослушивания всех внешних интерфейсов
+  timeout: 4s
+  idle_timeout: 60s
