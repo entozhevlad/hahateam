@@ -23,13 +23,12 @@ func main() {
 	log.Info("starting work program", slog.String("env", cfg.Env))
 	log.Debug("debug log enabled", slog.String("env", cfg.Env))
 
-	storage, err := postgres.NewStorage(cfg.StoragePath)
+	strorage, err := postgres.NewStorage(cfg.StoragePath)
 	if err != nil {
 		log.Error("failed to init storage", err)
 		os.Exit(1)
 	}
-	_ = storage
-
+	_ = strorage
 }
 
 func setUpLogger(env string) *slog.Logger {
