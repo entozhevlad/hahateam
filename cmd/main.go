@@ -2,9 +2,12 @@ package main
 
 import (
 	"HahaTeam/internal/config"
+	"HahaTeam/internal/http-server/handlers"
 	"HahaTeam/internal/storage/postgres"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log/slog"
+	"net/http"
 	"os"
 )
 
@@ -23,12 +26,26 @@ func main() {
 	log.Info("starting work program", slog.String("env", cfg.Env))
 	log.Debug("debug log enabled", slog.String("env", cfg.Env))
 
-	strorage, err := postgres.NewStorage(cfg.StoragePath)
+	storage, err := postgres.NewStorage(cfg.StoragePath)
 	if err != nil {
 		log.Error("failed to init storage", err)
 		os.Exit(1)
 	}
-	_ = strorage
+	router := gin.Default()
+	router.POST("/register", handlers.CreateNewUser(storage))
+	router.POST("/login", handlers.AuthenticationUser(storage))
+
+	srv := &http.Server{
+		Addr:         cfg.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
+	}
+	if err := srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+	log.Error("server stopped")
 }
 
 func setUpLogger(env string) *slog.Logger {
